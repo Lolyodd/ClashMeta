@@ -1,0 +1,85 @@
+proxies:
+  - name: SG OVH
+    server: 141.193.213.20
+    port: 443
+    type: vmess
+    uuid: 9e94f30b-8796-4492-a80d-5c9d537652d7
+    alterId: 0
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    servername: sgo-2.herbalv2ray.me
+    network: ws
+    ws-opts:
+      path: /herbalserver
+      headers:
+        Host: sgo-2.herbalv2ray.me
+    udp: true
+  - name: SG GeGe
+    server: 141.193.213.20
+    port: 443
+    type: vmess
+    uuid: 1b6818e6-8ca2-11ed-aedb-06b3e42ba9c8
+    alterId: 0
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    servername: wjvit.fastervpn.my.id
+    network: ws
+    ws-opts:
+      path: /YOURPATH/v2ray-vmess-ws-tls
+      headers:
+        Host: wjvit.fastervpn.my.id
+    udp: true
+#====================ShadowSocks#====================#
+  - name: SS•CTB•FREE 🇸🇬
+    type: ss
+    server: 141.193.213.20
+    port: 80
+    cipher: 2022-blake3-aes-128-gcm
+    password: GlobalSSHPremiumShadow==:WaVm4d5hGu4lsUXdhPtUmQ==
+    udp: true
+    plugin: v2ray-plugin
+    plugin-opts:
+      mode: websocket
+      host: ss-ctb-sg01.globalssh.xyz
+      tls: false
+      skip-cert-verify: true
+      path: "/shadow-ws/borutctb-globalssh"
+      mux: false
+      headers:
+        custom: ss-ctb-sg01.globalssh.xyz
+  - name: SS•OVH•FREE 🇸🇬
+    type: ss
+    server: 141.193.213.20
+    port: 80
+    cipher: 2022-blake3-aes-128-gcm
+    password: GlobalSSHPremiumShadow==:U29YTCgvZvrXfvvHu3MEiA==
+    udp: true
+    plugin: v2ray-plugin
+    plugin-opts:
+      mode: websocket
+      host: ss-ovh-sg01.globalssh.xyz
+      tls: false
+      skip-cert-verify: true
+      path: "/shadow-ws/borut-globalssh"
+      mux: false
+      headers:
+        custom: ss-ch-sg01.globalssh.xyz
+  - name: SS•IKD•FREE 🇮🇩
+    type: ss
+    server: 141.193.213.20
+    port: 80
+    cipher: 2022-blake3-aes-128-gcm
+    password: GlobalSSHPremiumShadow==:cHQPMPXVPVVIDtfDL34tRQ==
+    udp: true
+    plugin: v2ray-plugin
+    plugin-opts:
+      mode: websocket
+      host: ss-ikd-id01.globalssh.xyz
+      tls: false
+      skip-cert-verify: true
+      path: "/shadow-ws/borutid-globalssh"
+      mux: false
+      headers:
+        custom: ss-ikd-id01.globalssh.xyz
