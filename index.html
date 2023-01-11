@@ -34,6 +34,27 @@
 	</div>
 	<script src="js/particles.js"></script>
 	<script src="js/app.js"></script>
+<p style="color:red;font-family:courier;">Config ClashMeta Auto Update.</p>
+
+<input type="text" value="bit.ly" id="myInput">
+<button onclick="myFunction()">Copy</button>
+
+<script>
+function myFunction() {
+  // Get the text field
+  var copyText = document.getElementById("myInput");
+
+  // Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+  // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
+  
+  // Alert the copied text
+  alert("Copied the text: " + copyText.value);
+}
+</script>
 <script language="JavaScript">
 <!--
 readCookie();
