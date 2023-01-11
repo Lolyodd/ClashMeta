@@ -9,7 +9,7 @@ proxy-providers:
     health-check:
       enable: true
       url: http://www.gstatic.com/generate_204
-      interval: 300
+      interval: 99
 #====================================#
 port: 7890
 socks-port: 7891
@@ -166,14 +166,17 @@ proxys: &akun
       - akun
 
 connectivity-check: &check
-  interval: 300
+  interval: 99
+  tolerance: '99'
   url: 'http://cp.cloudflare.com/generate_204'
 URL-Test: &url-test 
   type: url-test
+  disable-udp: false
   <<: [ *check, *akun ]
 Load-Balance: &lb
   type: load-balance
-  strategy: consistent-hashing
+  strategy: round-robin
+  disable-udp: false
   <<: [ *check, *akun ]
 #====================Home====================#
 proxy-groups:
