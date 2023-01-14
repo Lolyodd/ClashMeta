@@ -171,160 +171,844 @@ proxy-providers:
       enable: true
       url: http://www.gstatic.com/generate_204
       interval: 99
-proxy-groups:
-- name: SIMASTER-AUTO
-  type: select
-  disable-udp: false
-  proxies:
-  - SIMCARD-SELECT
-  - SIMCARD-PING
-  - SIMCARD-FALLBACK
-  - SIMCARD-LOADBALANCE
-  - DIRECT
-  url: http://www.gstatic.com/generate_204
-  interval: '99'
-- name: SIMCARD-SELECT
-  type: select
-  disable-udp: false
-  use:
-  - akun1
-  - akun2
-  url: http://www.gstatic.com/generate_204
-  interval: '99'
-- name: SIMCARD-PING
+#====================SETTING=======================#
+proxys: &akun
+    use:
+      - akun1
+      - akun2
+
+connectivity-check: &check
+  interval: 99
+  tolerance: '99'
+  url: 'http://cp.cloudflare.com/generate_204'
+URL-Test: &url-test 
   type: url-test
   disable-udp: false
-  use:
-  - akun1
-  - akun2
-  url: http://www.gstatic.com/generate_204
-  interval: '99'
-- name: SIMCARD-FALLBACK
-  type: fallback
-  disable-udp: false
-  use:
-  - akun1
-  - akun2
-  url: http://www.gstatic.com/generate_204
-  interval: '99'
-- name: SIMCARD-LOADBALANCE
+  <<: [ *check, *akun ]
+Load-Balance: &lb
   type: load-balance
   strategy: round-robin
   disable-udp: false
-  use:
-  - akun1
-  - akun2
-  url: http://www.gstatic.com/generate_204
-  interval: '99'
-- name: WHATSAPP
-  type: select
-  disable-udp: false
-  proxies:
-  - SIMCARD-SELECT
-  - SIMCARD-PING
-  - SIMCARD-FALLBACK
-  - SIMCARD-LOADBALANCE
-  - DIRECT
-  url: http://www.gstatic.com/generate_204
-  interval: '99'
-- name: GAMING
-  type: select
-  disable-udp: false
-  proxies:
-  - SIMCARD-SELECT
-  - SIMCARD-PING
-  - SIMCARD-FALLBACK
-  - SIMCARD-LOADBALANCE
-  - DIRECT
-  url: http://www.gstatic.com/generate_204
-  interval: '99'
+  <<: [ *check, *akun ]
+#====================Home====================#
+proxy-groups:
+  - name: Home 🌐
+    type: select
+    disable-udp: false
+    proxies:
+      - Proxy 🌐
+      - Streaming 🎬
+      - Sosmed 🔔
+      - Online Shop 🛒
+      - Games 🎮
+      - MBanking 💲
+      - WhatsApp ✉️
+      - Zero
+      - AdsBlock ⛔
+  - name: Proxy 🌐
+    type: select
+    disable-udp: false
+    <<: *akun
+
+#====================Proxi Group==================#
+  - name: Sosmed 🔔
+    type: select
+    disable-udp: false
+    proxies:
+      - Sosmed-Select
+      - Sosmed-Ping
+      - Sosmed-LB
+
+  - name: Streaming 🎬
+    type: select
+    disable-udp: false
+    proxies:
+      - Stream-Select
+      - Stream-Ping
+      - Stream-LB
+
+  - name: Games 🎮
+    type: select
+    disable-udp: false
+    proxies:
+      - Games-Select
+      - Game-Ping
+      - Game-LB
+
+  - name: Online Shop 🛒
+    type: select
+    disable-udp: false
+    proxies:
+      - Shop-Select
+
+  - name: MBanking 💲
+    type: select
+    disable-udp: false
+    proxies:
+      - Bank-Select
+
+  - name: WhatsApp ✉️
+    type: select
+    disable-udp: false
+    proxies:
+      - WA
+      - DIRECTT
+
+  - name: Zero
+    type: select
+    disable-udp: false
+    proxies:
+      - Zero-select
+
+#===================Proxi====================#
+  - name: Stream-Select
+    type: select
+    disable-udp: false
+    <<: *akun 
+  - name: Sosmed-Select
+    type: select
+    disable-udp: false
+    <<: *akun 
+  - name: Games-Select
+    type: select
+    disable-udp: false
+    <<: *akun 
+  - name: Shop-Select
+    type: select
+    disable-udp: false
+    <<: *akun 
+  - name: Bank-Select
+    type: select
+    disable-udp: false
+    <<: *akun
+  - name: Sosmed-Ping
+    <<: *url-test
+  - name: Stream-Ping
+    <<: *url-test
+  - name: Game-Ping
+    <<: *url-test
+  - name: Sosmed-LB
+    <<: *lb
+  - name: Game-LB
+    <<: *lb
+  - name: Stream-LB
+    <<: *lb
+
+  - name: Zero-select
+    type: select
+    disable-udp: false
+    <<: *akun
+
+  - name: WA
+    type: select
+    disable-udp: false
+    <<: *akun
+
+  - name: AdsBlock ⛔
+    type: select
+    disable-udp: false
+    proxies:
+      - REJECT
+
+  - name: DIRECTT
+    type: select
+    disable-udp: false
+    proxies:
+      - DIRECT
+
+  - name: REJECTT
+    type: select
+    disable-udp: false
+    proxies:
+      - REJECT
+#==================RULE==================
 rule-providers:
-  Game:
+  Gamemaster:
+    type: file
+    behavior: classical
+    path: ./rule-port-game.yaml
+    url: https://bit.ly/3jTPM6Y
+    interval: 3600
+  Sosmedmaster:
+    type: file
+    behavior: classical
+    path: ./rule-port-sosmed.yaml
+    url: https://bit.ly/3Zfm5xq
+    interval: 3600
+  Streammaster:
+    type: file
+    behavior: classical
+    path: ./rule-port-stream.yaml
+    url: https://bit.ly/3jWwSfR
+    interval: 3600
+  Olshopmaster:
+    type: file
+    behavior: classical
+    path: ./rule-port-olshop.yaml
+    url: https://bit.ly/3WUsMDE
+    interval: 3600
+  Bankmaster:
+    type: file
+    behavior: classical
+    path: ./rule-port-bank.yaml
+    url: https://bit.ly/3ijtg77
+    interval: 3600
+  Whatsappmaster:
+    type: file
+    behavior: classical
+    path: ./rule-port-whatsapp.yaml
+    url: https://bit.ly/3ZfwXva
+    interval: 3600
+  rule_wa:
+    type: file
+    behavior: classical
+    path: ./rule_wa.yaml
+    url: https://raw.githubusercontent.com/malikshi/open_clash/main/rule_provider/rule_direct.yaml
+    interval: 3600
+  rule_BlockAds:
+    type: http
+    behavior: classical
+    path: "./rule_BlockAds.yaml"
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising_Classical.yaml
+    interval: 86400
+  rule_personalads:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/malikshi/open_clash/main/rule_provider/rule_personalads.yaml
+    path: "./rule_provider/rule_personalads.yaml"
+    interval: 86400
+  rule_basicads:
     type: http
     behavior: domain
-    path: ./rule_provider/rule-game.yaml
-    url: https://bit.ly/3X2SvcL
-    interval: 3600
-  Sosmed:
-    type: http
-    behavior: domain
-    path: ./rule_provider/rule-sosmed.yaml
-    url: https://bit.ly/3I4HG5I
-    interval: 3600
-  Stream:
-    type: http
-    behavior: domain
-    path: ./rule_provider/rule-stream.yaml
-    url: https://bit.ly/3PU6RJP
-    interval: 3600
-  Olshop:
-    type: http
-    behavior: domain
-    path: ./rule_provider/rule-olshop.yaml
-    url: https://bit.ly/3Wp85PH
-    interval: 3600
-  Bank:
-    type: http
-    behavior: domain
-    path: ./rule_provider/rule-bank.yaml
-    url: https://bit.ly/3hN7JUh
-    interval: 3600
-  Whatsapp:
-    type: http
-    behavior: domain
-    path: ./rule_provider/rule-whatsapp.yaml
-    url: http://bit.ly/3Vkdh6g
-    interval: 3600
+    url: https://raw.githubusercontent.com/malikshi/open_clash/main/rule_provider/rule_basicads.yaml
+    path: "./rule_provider/rule_basicads.yaml"
+    interval: 43200
+#==================SCRIPT==================
 script:
   code: |
     def main(ctx, metadata):
-        ruleset_action = {"Game": "GAMING",
-            "Sosmed": "SIMASTER-AUTO",
-            "Stream": "SIMASTER-AUTO",
-            "Olshop": "SIMASTER-AUTO",
-            "Bank": "SIMASTER-AUTO",
-            "Whatsapp": "WHATSAPP",
-          }
+        directkeywordlist = ["youtube"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["ytimg"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["googlevideo"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["googleapis"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["ggpht"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["gvt1"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["gvt2"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["obs"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["steam"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["netflix"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["hotstar"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["disney"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-STREAM' % directkeyword)
+                return "Streaming 🎬"
+
+        directkeywordlist = ["facebook"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["fbcdn"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["fbsx"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["instagram"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["cdninstagram"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["twitter"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["tiktok"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["tiktokv"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["tiktokcdn"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["byteoversea"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["ibytedtos"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["ipstatp"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["muscdn"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["musical"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SOSMED' % directkeyword)
+                return "Sosmed 🔔"
+
+        directkeywordlist = ["shopee"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["shopeemobile"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["bukalapak"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["lazada"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["tokopedia"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["alicdn"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["alibaba"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["amazon"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["aliyun-inc"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["aliyun"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["taobao"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-OLSHOP' % directkeyword)
+                return "Online Shop 🛒"
+
+        directkeywordlist = ["telegram"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SIMASTER-V1.8' % directkeyword)
+                return "Home 🌐"
+
+        directkeywordlist = ["roblox"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["aov"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["lytogame"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-SIMASTER-V1.8' % directkeyword)
+                return "Home 🌐"
+
+        directkeywordlist = ["whatsapp"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-WHATSAPP' % directkeyword)
+                return "WHATSAPP ONLY"
+
+        directkeywordlist = ["app"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["dana"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["gopay"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["onetrust"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["lencr"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["ingest"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["bri"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["bca"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["bni"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["mandiri"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["klikbca"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["bca"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["livechat"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["sectigo"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["bankmandiri"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["datadoghq-browser-agent"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["ovo"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["paypal"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["indodax"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-BANK' % directkeyword)
+                return "MBanking 💲"
+
+        directkeywordlist = ["aihelp"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["yuanzhapp"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["mobilelegends"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["garena"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["garenanow"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["akamaized"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["akamaihd"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["stumble"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["exitgames"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["unistream"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["kitkagames"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["kitkagames"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["unity3d"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["microvirt"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["supersonicads"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["gameanalytics"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["applovin"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["pubg"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["tencent"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["krafton"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["anticheatexpert"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["neptunegame"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["bosbosstatic"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["bytegsdk"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["youngjoygame"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["ibytedtos"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["byteoversea"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["freefiremobile"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["kitkagames"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["rbxcdn"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["roblox"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["mcafee"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use PORT-KHUSUS-GAME' % directkeyword)
+                return "Games 🎮"
+
+        directkeywordlist = ["zerotier"]
+        for directkeyword in directkeywordlist:
+            if directkeyword in metadata["host"]:
+                ctx.log('[Script] matched keyword %s use Zero' % directkeyword)
+                return "Zero"
 
         port = int(metadata["dst_port"])
-
         if metadata["network"] == "UDP":
-            if port == "21,22,23,53,80,443,8443":
-                ctx.log('[Script] matched QUIC traffic use SIMASTER-AUTO')
-                return "SIMASTER-AUTO"
+            if port == "21,22,23,53,80,81,443,853,5353,8000,8008,8080,8081,8090,8443,8888":
+                ctx.log('[Script] matched QUIC traffic use Home 🌐')
+                return "Home 🌐"
 
-        if metadata["dst_ip"] == "":
+        port = int(metadata["dst_port"])
+        if metadata["network"] == "UDP":
+            if port == "9993":
+                ctx.log('[Script] matched QUIC traffic use Zero"')
+                return "Zero"
+
+        port = int(metadata["dst_port"])
+        if metadata["network"] == "UDP":
+            if port == "30000":
+                ctx.log('[Script] matched QUIC traffic use Zero"')
+                return "Zero"
+
+        if metadata["dst_ip"] == "192.168.1.1":
             metadata["dst_ip"] = ctx.resolve_ip(metadata["host"])
 
-        port_list = [21, 22, 23, 53, 80, 81, 123, 443, 853, 5353, 8000, 8008, 8080, 8081, 8090, 8443, 8888, 9993]
+        port_list = [21, 22, 23, 53, 80, 81, 443, 853, 5353, 8000, 8008, 8080, 8081, 8090, 8443, 8888]
         if port not in port_list:
-            ctx.log('[Script] not common port use GAMING')
-            return "GAMING"
+            ctx.log('[Script] not common port use Games 🎮')
+            return "Games 🎮"
+
+        port_list = [3478, 5222]
+        if port in port_list:
+            ctx.log('[Script] common port use WHATSAPP ONLY')
+            return "WHATSAPP ONLY"
+
+        port_list = [20443]
+        if port in port_list:
+            ctx.log('[Script] common port use Online Shop 🛒')
+            return "Online Shop 🛒"
 
         if metadata["dst_ip"] == "":
-            return "DIRECT"
-
-        for ruleset in ruleset_action:
-            if ctx.rule_providers[ruleset].match(metadata):
-                return ruleset_action[ruleset]
+            return "Home 🌐"
 
         code = ctx.geoip(metadata["dst_ip"])
         if code == "ID":
             ctx.log('[Script] Geoip ID')
-            return "SIMASTER-AUTO"
+            return "Home 🌐"
 
-        ctx.log('[Script] SIMASTER-AUTO')
-        return "SIMASTER-AUTO"
+        ctx.log('[Script] Home 🌐')
+        return "Home 🌐"
 rules:
 - IP-CIDR,198.18.0.1/16,REJECT,no-resolve
-- RULE-SET,Game,GAMING
-- RULE-SET,Sosmed,SIMASTER-AUTO
-- RULE-SET,Stream,SIMASTER-AUTO
-- RULE-SET,Olshop,SIMASTER-AUTO
-- RULE-SET,Bank,SIMASTER-AUTO
-- RULE-SET,Whatsapp,WHATSAPP
-- GEOIP,ID,SIMASTER-AUTO
-- MATCH,SIMASTER-AUTO
+- DST-PORT,9993,Zero
+- DOMAIN-KEYWORD,zerotier,Zero
+- RULE-SET,Gamemaster,Games 🎮
+- RULE-SET,Sosmedmaster,Sosmed 🔔
+- RULE-SET,Streammaster,Streaming 🎬
+- RULE-SET,Olshopmaster,Online Shop 🛒
+- RULE-SET,Bankmaster,MBanking 💲
+- RULE-SET,Whatsappmaster,WhatsApp ✉️
+- GEOIP,ID,Home 🌐
+- MATCH,Home 🌐
 tun:
   enable: true
   stack: system
