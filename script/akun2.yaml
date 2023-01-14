@@ -1,0 +1,33 @@
+proxies:
+  - name: SG•DO2• 🇸🇬
+    server: 141.193.213.20
+    port: 443
+    type: vmess
+    uuid: a7a128f9-cf4b-4706-983c-0fb2e91aa35a
+    alterId: 0
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    servername: sg1.createxray.us
+    network: ws
+    ws-opts:
+      path: /vmess
+      headers:
+        Host: sg1.createxray.us
+    udp: true
+  - name: SG•CTB• 🇸🇬
+    server: 141.193.213.20
+    port: 443
+    type: vmess
+    uuid: e4fbc570-fe8b-42cd-ac8b-ea482542118f
+    alterId: 0
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    servername: sg1-ctb.v2rayserv.com
+    network: ws
+    ws-opts:
+      path: /vmess
+      headers:
+        Host: sg1-ctb.v2rayserv.com
+    udp: true
