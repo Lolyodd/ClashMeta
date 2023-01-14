@@ -1,0 +1,33 @@
+proxies:
+  - name: SG•LINODE• 🇸🇬
+    server: 141.193.213.20
+    port: 443
+    type: vmess
+    uuid: 537564cf-d9bc-4ef7-8b29-8691471d6658
+    alterId: 0
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    servername: sgl-2.herbalv2ray.me
+    network: ws
+    ws-opts:
+      path: /herbalserver
+      headers:
+        Host: sgl-2.herbalv2ray.me
+    udp: true
+  - name: SG•OVH• 🇸🇬
+    server: 141.193.213.20
+    port: 443
+    type: vmess
+    uuid: a61b7a6f-653f-491a-84df-745d135ee588
+    alterId: 0
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    servername: sgovh1.v2rayserv.com
+    network: ws
+    ws-opts:
+      path: /vmess
+      headers:
+        Host: sgovh1.v2rayserv.com
+    udp: true
